@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd">
+	<sub-flow name="get:\socialmediapost-subflow" doc:id="812e8693-ca77-43a1-b215-6af01692f6bf">
+		<logger level="INFO" doc:name="Log entrada" doc:id="111f8ce7-72a2-4f5d-820c-46c5d7ef9a92" />
+		<http:request method="GET" doc:name="Request p-socialmedia-api" doc:id="d76ef1e9-e195-4944-9229-d08aee7df2d6" config-ref="HTTP_Request_s-BBDD-api_configuration" path="/socialmediaposts"/>
+		<logger level="INFO" doc:name="Log response p-socialmedia-api" doc:id="f5dd0539-cdca-4381-a8af-4acad13660ea" />
+		<ee:transform doc:name="Set Response" doc:id="be3eb70a-93f8-4733-ba86-927f811aaf6a">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="get:\socialmediapost\(id)-subflow" doc:id="47a9f45d-7edc-438f-ba4e-a77ecacb79f5" >
+		<logger level="INFO" doc:name="Log entrada" doc:id="b1aa73c1-9fae-4c49-8702-a627758ca3f4" />
+		<http:request method="GET" doc:name="Request p-socialmedia-api" doc:id="80e575b5-7134-41e0-b23e-0de84ee43d35" config-ref="HTTP_Request_s-BBDD-api_configuration" path="/socialmediaposts/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"id" : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+		<logger level="INFO" doc:name="Log response e-socialmedia-api" doc:id="159607a4-aab7-4b49-831f-5d01c2f2b3c2" />
+		<ee:transform doc:name="Set response" doc:id="55e54535-eed9-492b-be6d-9aaf2dbdfc18" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="post\socialmediapost-subflow" doc:id="d103f320-1ba4-4a8c-a669-1faa2c39bb64" >
+		<logger level="INFO" doc:name="Log entrada" doc:id="f1c5566a-9344-4949-bd63-8897704ec09f" />
+		<ee:transform doc:name="Set request to canonical format" doc:id="72961413-d5c1-447f-8979-1bb0a66cb3dc">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"postCode": payload.postCode,
+	"title": payload.title,
+	"message": payload.message,
+	"author": payload.author,
+	"timestamp": now() >> "Europe/Madrid",
+	"toSocialMedia": payload.toSocialMedia,
+	"translation": payload.translation	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log canonical format" doc:id="ccd12d71-8025-43d4-bf6a-db7608970a4d" />
+		<anypoint-mq:publish doc:name="Publish" doc:id="f9d70f04-7b22-4b52-b2cc-afcd8c060e1e" config-ref="Anypoint_SocialMediaPost_MQ_Config" destination="socialmediaposts-queue"/>
+		<logger level="INFO" doc:name="Log response p-socialmedia-api" doc:id="237b18d1-3b98-4796-873b-99cbcdd6ab2c" />
+		<ee:transform doc:name="Set response" doc:id="06690bfc-856e-4a45-bcd8-d00524398e9d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

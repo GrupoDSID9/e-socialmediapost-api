@@ -1,0 +1,15 @@
+api:
+  name: "e-socialmediapost-api"
+  port: "8081"
+
+muleApis:
+  s-BBDD-api:
+    protocol: "HTTP"
+    host: "s-bbdd-api.de-c1.cloudhub.io"
+    port: "8081"
+    path: "api"
+
+mq:
+  ClientID: "![h/EzE9rPGkf2EW0v4jCeLuOL7x2acC7v0Fyjq9TW3RN1X/kDxBEyPg==]"
+  ClientSecret: "![/KKAZTUf+7h5G3UfazLHJtAVyzNj8gpZT6otKHCJF9/kT/HXut9k1A==]"
+  url: "![yvNbRkW7IQ9GWH1RM4UyVU0rHkyky5j6vZ4pH+gHLWwQ25jaKEcB3bm/KCMet3szgK9axg+bUmg+oivFD+KgqP7iU0Q9VMflsQx+BPxTGXGCF6GwJqZNxth3dgXhPQOfgvM7WnoHiDDJuZRxroBItua/QhfHaeg8+CFaScGdkp5yaIKkQ3CfJE8fB8xbFiO8b+6Bt9t551w=]"

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+    <http:listener-config name="e-socialmediapost-api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${api.port}" />
+    </http:listener-config>
+    <apikit:config name="e-socialmediapost-api-config" api="resource::6bfdfbd6-1d2e-4ffc-96e4-3a6ab65c6e06:e-socialmediapost-api:1.0.2:raml:zip:e-socialmediapost-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <global-property doc:name="Global Property" doc:id="b9879f40-6a76-4958-a349-3aba054c8a83" name="env" value="uat" />
+    <configuration-properties doc:name="Configuration properties" doc:id="98397a58-9784-49b1-9584-a1f93a13001d" file="properties/${env}.yaml" />
+    <http:request-config name="HTTP_Request_s-BBDD-api_configuration" doc:name="HTTP Request configuration" doc:id="176512d0-2ee2-41fd-b081-76ea8ea8469c" basePath="${muleApis.s-BBDD-api.path}">
+        <http:request-connection host="${muleApis.s-BBDD-api.host}"/>
+    </http:request-config>
+    <anypoint-mq:config name="Anypoint_SocialMediaPost_MQ_Config" doc:name="Anypoint MQ Config" doc:id="9ebb1436-15c1-470f-812e-cdae58f905f3">
+        <anypoint-mq:connection url="${secure::mq.url}" clientId="${secure::mq.ClientID}" clientSecret="${secure::mq.ClientSecret}" />
+    </anypoint-mq:config>
+    <secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="c2726232-edee-4226-86f2-4526e2e4baec" file="properties/${env}.yaml" key="${secure.key}">
+        <secure-properties:encrypt algorithm="Blowfish" />
+    </secure-properties:config>
+</mule>
