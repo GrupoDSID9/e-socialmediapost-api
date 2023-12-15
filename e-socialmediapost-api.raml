@@ -1,0 +1,118 @@
+#%RAML 1.0
+title: e-socialmediaposts-api
+description: Experience API for social media posts
+mediaType:
+    - application/json
+version: "v1"
+protocols:
+    - HTTP
+
+types:
+  # Objeto para hacer POST a las redes sociales
+  SocialMediaPost:
+    type: object
+    properties:
+      postCode: string
+      title: string
+      message: string
+      author: string
+      timestamp: string
+      toSocialMedia: 
+        type: string
+        enum: [TW, FB, ALL]
+      translation: boolean
+
+  # Objeto de consultar la base de datos con las columnas que quieras.
+  PostedSocialMediaPost:
+    type: object
+    properties:
+      id: number
+      postCode: string
+      title: string
+      message: string
+      author: string
+      timestamp: string
+      toSocialMedia: 
+        type: string
+        enum: [TW, FB, ALL]
+      translation: boolean
+
+/socialmediaposts:
+  post:
+    displayName: Post Social Media Posts
+    description: Post the same post in different social media.
+    #SI ES UN POST HAY QUE ESPECIFICAR EL BODY
+    body:
+      type: SocialMediaPost
+    responses:
+      201:
+        body:   
+          type: application/json
+          example: "Post added."
+      400:
+        body:
+          type: string
+          example: "Bad request"
+      401:
+        body:
+          type: string
+          example: "Unauthorized"
+      404:
+        body:
+          type: string
+          example: "Not Found"    
+      500:
+        body:
+          type: string
+          example: "Server not available"  
+
+  # Consultar todas las publicaciones de la BBDD
+  get:
+    displayName: Get Social Media Posts
+    description: Get all social media posts
+    responses:
+      201:
+        body:   
+          type: PostedSocialMediaPost  [] # Te devuelve un Array con las publicaciones
+      400:
+        body:
+          type: string
+          example: "Bad request"
+      401:
+        body:
+          type: string
+          example: "Unauthorized"
+      404:
+        body:
+          type: string
+          example: "Not Found"    
+      500:
+        body:
+          type: string
+          example: "Server not available" 
+
+/socialmediaposts/{id}:
+  get:
+    displayName: Get Posted Social Media Post
+    description: Get social media post by id
+    responses:
+      201:
+        body:   
+          type: PostedSocialMediaPost
+      400:
+        body:
+          type: string
+          example: "Bad request"
+      401:
+        body:
+          type: string
+          example: "Unauthorized"
+      404:
+        body:
+          type: string
+          example: "Not Found"    
+      500:
+        body:
+          type: string
+          example: "Server not available" 
+
